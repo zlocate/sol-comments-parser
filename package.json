@@ -1,0 +1,27 @@
+{
+    "name": "sol-comments-parser",
+    "version": "0.1.0-alpha",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/obernardovieira/sol-comments-parser.git"
+    },
+    "keywords": [],
+    "author": {
+        "name": "Bernardo Vieira",
+        "github": "obernardovieira"
+    },
+    "license": "GPL-3.0-only",
+    "bugs": {
+        "url": "https://github.com/obernardovieira/sol-comments-parser/issues"
+    },
+    "homepage": "https://github.com/obernardovieira/sol-comments-parser#readme",
+    "devDependencies": {
+        "expect.js": "^0.3.1",
+        "mocha": "^6.1.4"
+    }
+}
