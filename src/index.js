@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 /**
  * Generic comments organizer.
  * @param {string[]} comments input containing an array with all comments
@@ -16,7 +14,7 @@ function proceedParse(comments) {
             // get param name
             const paramName = splitComments[c + 1].match(/(\w+).*/)[1];
             // clean up the comment
-            const readableComment = splitComments[c + 1].split(paramName)[1].replace(/\s+\*\/?/gm, '');
+            const readableComment = splitComments[c + 1].slice(paramName.length + 1, splitComments[c + 1].length);
             // add to array
             paramComments.set(paramName, readableComment);
         } else if (splitComments[c] === 'return') {
@@ -27,7 +25,7 @@ function proceedParse(comments) {
             devComment = splitComments[c + 1];
         }
     }
-    return { param: paramComments, return: returnComment, dev: devComment};
+    return { param: paramComments, return: returnComment, dev: devComment };
 }
 
 /**
@@ -48,7 +46,7 @@ exports.mapComments = (input) => {
         // remove ine break
         const noLineBreak = comment.replace(/\s{2,}\*?(?!\/)/gm, '');
         // create a new type of comment
-        const newCommentLine = '<<#' + noLineBreak.match(/\/\*\*(.+)\*\//)[1] + '#>>';
+        const newCommentLine = `<<#${noLineBreak.match(/\/\*\*(.+)\*\//)[1]}#>>`;
         // replace the original comment by the new style
         output = output.replace(comment, newCommentLine);
     });
@@ -57,10 +55,10 @@ exports.mapComments = (input) => {
     //
     functionComments.forEach((comment) => {
         // now, see if it's a function, contract, event or a unicorn
-        let matched = comment.match(/<<#(.+?)#>>\W+function (\w+)/);
+        const matched = comment.match(/<<#(.+?)#>>\W+function (\w+)/);
         const comments = matched[1];
         const functionName = matched[2];
         outputFunctions.set(functionName, proceedParse(comments));
     });
-    return { function: outputFunctions};
+    return { function: outputFunctions };
 };
