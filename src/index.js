@@ -3,10 +3,12 @@
  * @param {string[]} comments input containing an array with all comments
  */
 function proceedParse(comments) {
-    const splitComments = comments.split(/@(dev|param|return) /);
+    const splitComments = comments.split(/@(dev|param|return|notice|author) /);
     const paramComments = new Map();
     const returnComment = [];
     let devComment = '';
+    let noticeComment = '';
+    let authorComment = '';
     //
     for (let c = 1; c < splitComments.length; c += 2) {
         // if it's a param, extract the name
@@ -23,9 +25,17 @@ function proceedParse(comments) {
         } else if (splitComments[c] === 'dev') {
             // clean up the comment
             devComment = splitComments[c + 1];
+        } else if (splitComments[c] === 'notice') {
+            // clean up the comment
+            noticeComment = splitComments[c + 1];
+        } else if (splitComments[c] === 'author') {
+            // clean up the comment
+            authorComment = splitComments[c + 1];
         }
     }
-    return { param: paramComments, return: returnComment, dev: devComment };
+    return {
+        param: paramComments, return: returnComment, dev: devComment, notice: noticeComment, author: authorComment,
+    };
 }
 
 /**

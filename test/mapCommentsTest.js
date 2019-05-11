@@ -1,7 +1,7 @@
-const expect =require('expect.js');
+const expect = require('expect.js');
 const fs = require('fs');
 
-const mapComments = require('../src/index').mapComments;
+const { mapComments } = require('../src/index');
 
 describe('ERC20', () => {
     const filePath = 'test/contracts/ERC20.sol';
@@ -83,14 +83,24 @@ describe('Tree', () => {
         comments = mapComments(input);
     });
 
-    describe('extract @dev comments', () => {
-        it('extract single line no param/return valid comments', () => {
+    describe('extract all types of comments from function', () => {
+        it('@dev', () => {
             // verify
             expect(comments.function.get('age').dev.trim())
                 .to.be('The Alexandr N. Tetearing algorithm could increase precision');
         });
-
+        it('@notice', () => {
+            // verify
+            expect(comments.function.get('age').notice.trim())
+                .to.be('Calculate tree age in years, rounded up, for live trees');
+        });
+        it('@author', () => {
+            // verify
+            expect(comments.function.get('age').author.trim())
+                .to.be('Mary A. Botanist');
+        });
     });
+
     describe('extract @param comments', () => {
         it('extract two params w/ valid comments', () => {
             // verify
