@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const mapComments = require('../src/index').mapComments;
 
-describe('MapComments', () => {
+describe('ERC20', () => {
     const filePath = 'test/contracts/ERC20.sol';
     let comments = '';
 
@@ -60,5 +60,59 @@ describe('MapComments', () => {
             expect(comments.function.get('allowance').param.get('spender').trim())
                 .to.be('The address which will spend the funds.');
         });
+        it('extract three params w/ valid comments', () => {
+            // verify
+            expect(comments.function.get('transferFrom').param.get('from').trim())
+                .to.be('The address which you want to send tokens from');
+            expect(comments.function.get('transferFrom').param.get('to').trim())
+                .to.be('The address which you want to transfer to');
+            expect(comments.function.get('transferFrom').param.get('value').trim())
+                .to.be('The amount of tokens to be transferred');
+        });
+    });
+});
+
+describe('Tree', () => {
+    const filePath = 'test/contracts/Tree.sol';
+    let comments = '';
+
+    before(() => {
+        // read file
+        const input = fs.readFileSync(filePath).toString();
+        // get filtered comments
+        comments = mapComments(input);
+    });
+
+    describe('extract @dev comments', () => {
+        it('extract single line no param/return valid comments', () => {
+            // verify
+            expect(comments.function.get('age').dev.trim())
+                .to.be('The Alexandr N. Tetearing algorithm could increase precision');
+        });
+
+    });
+    describe('extract @param comments', () => {
+        it('extract two params w/ valid comments', () => {
+            // verify
+            expect(comments.function.get('age').param.get('rings').trim())
+                .to.be('The number of rings from dendrochronological sample');
+        });
+    });
+});
+
+describe('Empty', () => {
+    const filePath = 'test/contracts/Empty.sol';
+    let comments = '';
+
+    before(() => {
+        // read file
+        const input = fs.readFileSync(filePath).toString();
+        // get filtered comments
+        comments = mapComments(input);
+    });
+
+    it('should be empty', () => {
+        // verify
+        expect(JSON.stringify(comments.entries())).to.be('{}');
     });
 });
