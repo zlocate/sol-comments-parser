@@ -32,7 +32,7 @@ function proceedParse(comments) {
         } else if (splitComments[c] === 'author') {
             // clean up the comment
             authorComment = splitComments[c + 1];
-        } else if (splitComments[c] === 'title') {
+        } else { // if (splitComments[c] === 'title') {
             // clean up the comment
             titleComment = splitComments[c + 1];
         }
@@ -52,8 +52,10 @@ function proceedParse(comments) {
  */
 exports.mapComments = (input) => {
     let output = input;
+    let outputConstructor;
     const outputFunctions = new Map();
     const outputContracts = new Map();
+    const outputEvents = new Map();
     const outputResult = new Map();
     // get original comments
     const rawComments = output.match(/\/\*\*[\w\W]+?\*\//gm);
@@ -71,23 +73,27 @@ exports.mapComments = (input) => {
         output = output.replace(comment, newCommentLine);
     });
     // and then we parse them into variables
-    // first from functions
-    const functionComments = output.match(/<<#.+?#>>\W+function \w+/gm);
-    functionComments.forEach((comment) => {
+    // first from functions, contract and event
+    const findComments = output.match(/<<#.+?#>>\W+\w+ \w+/gm);
+    findComments.forEach((comment) => {
         // now, see if it's a function, contract, event or a unicorn
-        const matched = comment.match(/<<#(.+?)#>>\W+function (\w+)/);
+        const matched = comment.match(/<<#(.+?)#>>\W+(function|contract|event) (\w+)/);
         const comments = matched[1];
-        const functionName = matched[2];
-        outputFunctions.set(functionName, proceedParse(comments));
+        const subjectName = matched[3];
+        if (matched[2] === 'function') {
+            outputFunctions.set(subjectName, proceedParse(comments));
+        } else if (matched[2] === 'contract') {
+            outputContracts.set(subjectName, proceedParse(comments));
+        } else { // if (matched[2] === 'event') {
+            outputEvents.set(subjectName, proceedParse(comments));
+        }
     });
-    // then contracts
-    const contractComments = output.match(/<<#.+?#>>\W+contract \w+/gm);
-    contractComments.forEach((comment) => {
-        // now, see if it's a function, contract, event or a unicorn
-        const matched = comment.match(/<<#(.+?)#>>\W+contract (\w+)/);
-        const comments = matched[1];
-        const contractName = matched[2];
-        outputContracts.set(contractName, proceedParse(comments));
-    });
-    return { contract: outputContracts, function: outputFunctions };
+    // constructor is a special case
+    const constructorComments = output.match(/<<#(.+?)#>>\W+constructor/);
+    if (constructorComments !== null) {
+        outputConstructor = proceedParse(constructorComments[1]);
+    }
+    return {
+        contract: outputContracts, function: outputFunctions, event: outputEvents, constructor: outputConstructor,
+    };
 };

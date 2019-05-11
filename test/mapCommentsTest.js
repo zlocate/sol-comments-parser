@@ -149,3 +149,51 @@ describe('Empty', () => {
         expect(JSON.stringify(comments.entries())).to.be('{}');
     });
 });
+
+describe('Plane', () => {
+    const filePath = 'test/contracts/Plane.sol';
+    let comments = '';
+
+    before(() => {
+        // read file
+        const input = fs.readFileSync(filePath).toString();
+        // get filtered comments
+        comments = mapComments(input);
+    });
+
+    describe('extract all types of comments from event', () => {
+        it('@dev', () => {
+            // verify
+            expect(comments.event.get('Land').dev.trim())
+                .to.be('Emitted by land function');
+        });
+        it('@notice', () => {
+            // verify
+            expect(comments.event.get('Land').notice.trim())
+                .to.be('This is a plane event');
+        });
+        it('@author', () => {
+            // verify
+            expect(comments.event.get('Land').author.trim())
+                .to.be('Bernardo Vieira');
+        });
+    });
+
+    describe('extract all types of comments from constructor', () => {
+        it('@dev', () => {
+            // verify
+            expect(comments.constructor.dev.trim())
+                .to.be('May flight, or may not');
+        });
+        it('@notice', () => {
+            // verify
+            expect(comments.constructor.notice.trim())
+                .to.be('This is a plane constructor');
+        });
+        it('@author', () => {
+            // verify
+            expect(comments.constructor.author.trim())
+                .to.be('Bernardo Vieira');
+        });
+    });
+});
