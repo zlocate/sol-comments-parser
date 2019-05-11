@@ -3,12 +3,13 @@
  * @param {string[]} comments input containing an array with all comments
  */
 function proceedParse(comments) {
-    const splitComments = comments.split(/@(dev|param|return|notice|author) /);
+    const splitComments = comments.split(/@(dev|param|return|notice|author|title) /);
     const paramComments = new Map();
     const returnComment = [];
     let devComment = '';
     let noticeComment = '';
     let authorComment = '';
+    let titleComment = '';
     //
     for (let c = 1; c < splitComments.length; c += 2) {
         // if it's a param, extract the name
@@ -31,10 +32,18 @@ function proceedParse(comments) {
         } else if (splitComments[c] === 'author') {
             // clean up the comment
             authorComment = splitComments[c + 1];
+        } else if (splitComments[c] === 'title') {
+            // clean up the comment
+            titleComment = splitComments[c + 1];
         }
     }
     return {
-        param: paramComments, return: returnComment, dev: devComment, notice: noticeComment, author: authorComment,
+        param: paramComments,
+        return: returnComment,
+        dev: devComment,
+        notice: noticeComment,
+        author: authorComment,
+        title: titleComment,
     };
 }
 
@@ -44,6 +53,7 @@ function proceedParse(comments) {
 exports.mapComments = (input) => {
     let output = input;
     const outputFunctions = new Map();
+    const outputContracts = new Map();
     const outputResult = new Map();
     // get original comments
     const rawComments = output.match(/\/\*\*[\w\W]+?\*\//gm);
@@ -61,8 +71,8 @@ exports.mapComments = (input) => {
         output = output.replace(comment, newCommentLine);
     });
     // and then we parse them into variables
+    // first from functions
     const functionComments = output.match(/<<#.+?#>>\W+function \w+/gm);
-    //
     functionComments.forEach((comment) => {
         // now, see if it's a function, contract, event or a unicorn
         const matched = comment.match(/<<#(.+?)#>>\W+function (\w+)/);
@@ -70,5 +80,14 @@ exports.mapComments = (input) => {
         const functionName = matched[2];
         outputFunctions.set(functionName, proceedParse(comments));
     });
-    return { function: outputFunctions };
+    // then contracts
+    const contractComments = output.match(/<<#.+?#>>\W+contract \w+/gm);
+    contractComments.forEach((comment) => {
+        // now, see if it's a function, contract, event or a unicorn
+        const matched = comment.match(/<<#(.+?)#>>\W+contract (\w+)/);
+        const comments = matched[1];
+        const contractName = matched[2];
+        outputContracts.set(contractName, proceedParse(comments));
+    });
+    return { contract: outputContracts, function: outputFunctions };
 };

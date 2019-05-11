@@ -101,6 +101,29 @@ describe('Tree', () => {
         });
     });
 
+    describe('extract all types of comments from contract', () => {
+        it('@dev', () => {
+            // verify
+            expect(comments.contract.get('Tree').dev.trim())
+                .to.be('All function calls are currently implemented without side effects');
+        });
+        it('@notice', () => {
+            // verify
+            expect(comments.contract.get('Tree').notice.trim())
+                .to.be('You can use this contract for only the most basic simulation');
+        });
+        it('@author', () => {
+            // verify
+            expect(comments.contract.get('Tree').author.trim())
+                .to.be('Larry A. Gardner');
+        });
+        it('@title', () => {
+            // verify
+            expect(comments.contract.get('Tree').title.trim())
+                .to.be('A simulator for trees');
+        });
+    });
+
     describe('extract @param comments', () => {
         it('extract two params w/ valid comments', () => {
             // verify
