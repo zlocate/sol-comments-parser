@@ -78,14 +78,17 @@ exports.mapComments = (input) => {
     findComments.forEach((comment) => {
         // now, see if it's a function, contract, event or a unicorn
         const matched = comment.match(/<<#(.+?)#>>\W+(function|contract|event) (\w+)/);
-        const comments = matched[1];
-        const subjectName = matched[3];
-        if (matched[2] === 'function') {
-            outputFunctions.set(subjectName, proceedParse(comments));
-        } else if (matched[2] === 'contract') {
-            outputContracts.set(subjectName, proceedParse(comments));
-        } else { // if (matched[2] === 'event') {
-            outputEvents.set(subjectName, proceedParse(comments));
+        // it can be null, because we are not catching interfaces yet, for example
+        if (matched !== null) {
+            const comments = matched[1];
+            const subjectName = matched[3];
+            if (matched[2] === 'function') {
+                outputFunctions.set(subjectName, proceedParse(comments));
+            } else if (matched[2] === 'contract') {
+                outputContracts.set(subjectName, proceedParse(comments));
+            } else { // if (matched[2] === 'event') {
+                outputEvents.set(subjectName, proceedParse(comments));
+            }
         }
     });
     // constructor is a special case
