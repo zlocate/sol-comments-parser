@@ -19,22 +19,22 @@ function proceedParse(comments) {
             // clean up the comment
             const readableComment = splitComments[c + 1].slice(paramName.length + 1, splitComments[c + 1].length);
             // add to array
-            paramComments.set(paramName, readableComment);
+            paramComments.set(paramName, readableComment.trim());
         } else if (splitComments[c] === 'return') {
             // clean up the comment
-            returnComment.push(splitComments[c + 1]);
+            returnComment.push(splitComments[c + 1].trim());
         } else if (splitComments[c] === 'dev') {
             // clean up the comment
-            devComment = splitComments[c + 1];
+            devComment = splitComments[c + 1].trim();
         } else if (splitComments[c] === 'notice') {
             // clean up the comment
-            noticeComment = splitComments[c + 1];
+            noticeComment = splitComments[c + 1].trim();
         } else if (splitComments[c] === 'author') {
             // clean up the comment
-            authorComment = splitComments[c + 1];
+            authorComment = splitComments[c + 1].trim();
         } else { // if (splitComments[c] === 'title') {
             // clean up the comment
-            titleComment = splitComments[c + 1];
+            titleComment = splitComments[c + 1].trim();
         }
     }
     return {
