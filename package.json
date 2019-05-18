@@ -1,6 +1,6 @@
 {
     "name": "sol-comments-parser",
-    "version": "0.1.0-alpha",
+    "version": "0.1.0-beta",
     "description": "",
     "main": "src/index.js",
     "scripts": {
@@ -14,7 +14,17 @@
         "type": "git",
         "url": "git+https://github.com/obernardovieira/sol-comments-parser.git"
     },
-    "keywords": [],
+    "keywords": [
+        "solidity",
+        "solidity-contracts",
+        "solidity-language",
+        "solidity-web",
+        "smart-contract",
+        "smart-contracts",
+        "comment",
+        "comments",
+        "parser"
+    ],
     "author": {
         "name": "Bernardo Vieira",
         "github": "obernardovieira"
