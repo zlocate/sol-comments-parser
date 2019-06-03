@@ -146,7 +146,7 @@ describe('Empty', () => {
 
     it('should be empty', () => {
         // verify
-        expect(JSON.stringify(comments.entries())).to.be('{}');
+        expect(comments.size).to.be(0);
     });
 });
 
@@ -195,5 +195,29 @@ describe('Plane', () => {
             expect(comments.constructor.author)
                 .to.be('Bernardo Vieira');
         });
+    });
+});
+
+describe('Single', () => {
+    const filePath = 'test/contracts/Single.sol';
+    let comments = '';
+
+    before(() => {
+        // read file
+        const input = fs.readFileSync(filePath).toString();
+        // get filtered comments
+        comments = mapComments(input);
+    });
+
+    it('should have a single line comment with //', () => {
+        // verify
+        expect(comments.function.get('line').dev)
+            .to.be('this is a single line comment');
+    });
+
+    it('should have a single line comment with ///', () => {
+        // verify
+        expect(comments.function.get('corner').dev)
+            .to.be('this is a single corner comment');
     });
 });

@@ -48,20 +48,22 @@ function proceedParse(comments) {
 }
 
 /**
- *
+ * From a given input, get all the multiline comments, within /** *\/
+ * @param {string} input contract code as a string
  */
-exports.mapComments = (input) => {
+function getMultilineComments(input) {
     let output = input;
-    let outputConstructor;
+    let outputConstructor = new Map();
     const outputFunctions = new Map();
     const outputContracts = new Map();
     const outputEvents = new Map();
-    const outputResult = new Map();
     // get original comments
     const rawComments = output.match(/\/\*\*[\w\W]+?\*\//gm);
     // If there's no comments!
     if (rawComments === null) {
-        return outputResult;
+        return {
+            contract: outputContracts, function: outputFunctions, event: outputEvents, constructor: outputConstructor,
+        };
     }
     // first we transform the comment to a specific format
     rawComments.forEach((comment) => {
@@ -99,4 +101,55 @@ exports.mapComments = (input) => {
     return {
         contract: outputContracts, function: outputFunctions, event: outputEvents, constructor: outputConstructor,
     };
+}
+
+/**
+ * From a given input, and all the previous values from multiline parsing,
+ * get the single line comments after // or ///.
+ * @param {string} input input contract code as a string
+ * @param {map} outputFunctions functions map with comments
+ * @param {map} outputContracts contracts map with comment
+ * @param {map} outputEvents events map with comments
+ * @param {map} outputConstructor contructor map with comments
+ */
+function getSingleLineComments(input, outputFunctions, outputContracts, outputEvents, outputConstructor) {
+    // look for single line comments in functions
+    const rawComments = input.match(/\/\/\/?([@\w ]+)\W+function ([\w]+)\(/g);
+    // if not inline commants were found
+    if (rawComments === null) {
+        // and eventualy no multiline comments as well, lets return empty
+        if (
+            outputFunctions.size === 0
+            && outputContracts.size === 0
+            && outputEvents.size === 0
+            && outputConstructor.size === 0
+        ) {
+            return new Map();
+        }
+        // otherwise return the previous state
+        return {
+            contract: outputContracts, function: outputFunctions, event: outputEvents, constructor: outputConstructor,
+        };
+    }
+    // lets iterate over all simple line comments found (only for functions, right now)
+    rawComments.forEach((comment) => {
+        // now, see if it's a function, contract, event or a unicorn
+        const matched = comment.match(/\/\/\/? ([@\w ]+)\W+function ([\w]+)\(/);
+        outputFunctions.set(matched[2], proceedParse(matched[1]));
+    });
+    return {
+        contract: outputContracts, function: outputFunctions, event: outputEvents, constructor: outputConstructor,
+    };
+}
+
+/**
+ *
+ */
+exports.mapComments = (input) => {
+    //
+    const multiline = getMultilineComments(input);
+    const singleline = getSingleLineComments(
+        input, multiline.function, multiline.contract, multiline.event, multiline.constructor,
+    );
+    return singleline;
 };
