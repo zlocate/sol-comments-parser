@@ -2,18 +2,21 @@ const expect = require('expect.js');
 const fs = require('fs');
 
 const { mapComments } = require('../src/index');
+const BASE_PATH = 'test/contracts/';
+
+function loadComments(contractName) { // read file
+    const input = fs.readFileSync(`${BASE_PATH}${contractName}.sol`, 'utf-8')
+    // comments.function.get filtered comments
+    return mapComments(input);
+}
 
 describe('ERC20', () => {
-    const filePath = 'test/contracts/ERC20.sol';
-    let comments = '';
+    const contractName = 'ERC20';
+    var comments;
 
     before(() => {
-        // read file
-        const input = fs.readFileSync(filePath).toString();
-        // get filtered comments
-        comments = mapComments(input);
+        comments = loadComments(contractName);
     });
-
     describe('extract @dev comments', () => {
         it('extract single line no param/return valid comments', () => {
             // verify
@@ -73,14 +76,13 @@ describe('ERC20', () => {
 });
 
 describe('Tree', () => {
-    const filePath = 'test/contracts/Tree.sol';
-    let comments = '';
+    const contractName = 'Tree';
+    var comments;
+
 
     before(() => {
-        // read file
-        const input = fs.readFileSync(filePath).toString();
-        // get filtered comments
-        comments = mapComments(input);
+        comments = loadComments(contractName);
+
     });
 
     describe('extract all types of comments from function', () => {
@@ -134,14 +136,12 @@ describe('Tree', () => {
 });
 
 describe('Empty', () => {
-    const filePath = 'test/contracts/Empty.sol';
-    let comments = '';
+    const contractName = 'Empty';
+    var comments;
 
     before(() => {
-        // read file
-        const input = fs.readFileSync(filePath).toString();
-        // get filtered comments
-        comments = mapComments(input);
+        comments = loadComments(contractName);
+
     });
 
     it('should be empty', () => {
@@ -151,14 +151,11 @@ describe('Empty', () => {
 });
 
 describe('Plane', () => {
-    const filePath = 'test/contracts/Plane.sol';
+    const contractName = 'Plane';
     let comments = '';
-
     before(() => {
-        // read file
-        const input = fs.readFileSync(filePath).toString();
-        // get filtered comments
-        comments = mapComments(input);
+        comments = loadComments(contractName);
+
     });
 
     describe('extract all types of comments from event', () => {
@@ -199,16 +196,12 @@ describe('Plane', () => {
 });
 
 describe('Single', () => {
-    const filePath = 'test/contracts/Single.sol';
-    let comments = '';
+    const contractName = 'Single';
+    var comments;
 
     before(() => {
-        // read file
-        const input = fs.readFileSync(filePath).toString();
-        // get filtered comments
-        comments = mapComments(input);
+        comments = loadComments(contractName);
     });
-
     it('should have a single line comment with //', () => {
         // verify
         expect(comments.function.get('line').dev)

@@ -142,14 +142,19 @@ function getSingleLineComments(input, outputFunctions, outputContracts, outputEv
     };
 }
 
-/**
- *
- */
-exports.mapComments = (input) => {
+function mapComments (input) {
     //
     const multiline = getMultilineComments(input);
     const singleline = getSingleLineComments(
         input, multiline.function, multiline.contract, multiline.event, multiline.constructor,
     );
     return singleline;
+}
+/**
+ *
+ */
+module.exports= {
+    mapComments,
+    getSingleLineComments,
+    getMultilineComments
 };
