@@ -135,7 +135,7 @@ function getSingleLineComments(input, outputFunctions, outputContracts, outputEv
     rawComments.forEach((comment) => {
         // now, see if it's a function, contract, event or a unicorn
         const matched = comment.match(/\/\/\/? ([@\w ]+)\W+function ([\w]+)\(/);
-        
+
         if (matched !== null && matched.length >= 3) {
             outputFunctions.set(matched[2], proceedParse(matched[1]));
         }
